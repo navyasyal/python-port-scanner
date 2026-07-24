@@ -1,7 +1,3 @@
-
-
-https://github.com/user-attachments/assets/7cf914a1-1d14-4856-bb60-02a505c3efdd
-
 # NetRecon — Network Reconnaissance Dashboard
 
 A full-stack network reconnaissance web application built around a multithreaded
