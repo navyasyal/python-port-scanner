@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+*.log
+backend/results/*.csv
+backend/results/*.json
+!backend/results/.gitkeep
+
+# Node / frontend
+node_modules/
+frontend/dist/
+frontend/.env
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
