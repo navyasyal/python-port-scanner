@@ -9,7 +9,15 @@ The original CLI scanner's core logic — socket connect scanning, banner grabbi
 service lookup, CSV/JSON export — is preserved and reused; it now runs behind an
 API instead of argparse, with live progress reporting and a browser-based UI.
 
-![status](https://img.shields.io/badge/status-active-00C853) ![python](https://img.shields.io/badge/python-3.10%2B-38BDF8) ![license](https://img.shields.io/badge/license-MIT-FACC15)
+![status](https://img.shields.io/badge/status-active-00C853) ![python](https://img.shields.io/badge/python-3.10%2B-38BDF8) ![license](https://img.shields.io/badge/license-MIT-FACC15) ![demo](https://img.shields.io/badge/demo-live-00C853?logo=netlify&logoColor=white)
+
+**🔗 Live demo:** **[NetRecon App](https://netrecon.netlify.app/)**
+
+> Backend runs on Render's free tier, which spins down after ~15 min of
+> inactivity — the first request after idle time can take 30-50s to wake up.
+> That's normal, not a bug. Try the **Scanner** page with the default target
+> (`scanme.nmap.org`, ports `20-1024`) for a reliable demo run with real open
+> ports to show off the charts and results table.
 
 ---
 
@@ -30,10 +38,8 @@ API instead of argparse, with live progress reporting and a browser-based UI.
 - **Dark / light theme toggle**, responsive layout, keyboard-focus states, and
   reduced-motion support.
 
-## Screenshots
+## Screen Recording
 
-> _Add screenshots of the running app here before publishing — e.g._
-> `screenshots/dashboard.png`, `screenshots/scanner.png`, `screenshots/reports.png`.
 
 ## Architecture
 
@@ -128,7 +134,70 @@ your deployed backend's URL and run `npm run build`.
 5. Visit **Reports** to download the finished scan as CSV or JSON, or **Logs**
    to review the raw scan log.
 
+## Deployment (live demo)
+
+This deploys the same way as a typical MERN/Flask split: **backend on Render,
+frontend on Netlify or Vercel**.
+
+### 1. Push to GitHub
+
+```bash
+cd network-recon-dashboard
+git init
+git add .
+git commit -m "Initial commit: NetRecon dashboard"
+git branch -M main
+git remote add origin https://github.com/<you>/network-recon-dashboard.git
+git push -u origin main
+```
+
+### 2. Backend → Render
+
+1. On [render.com](https://render.com), **New → Web Service**, connect your repo.
+2. **Root directory**: `backend`
+3. **Build command**: `pip install -r requirements.txt`
+4. **Start command**: `gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120`
+   (already saved as `backend/Procfile`, so Render should pick it up automatically)
+5. **Environment variable** — set `CORS_ORIGIN` to your Netlify URL once you have
+   it (step 3), e.g. `https://netrecon-demo.netlify.app`. Leave it as `*` only
+   for quick testing, not for a real deployment.
+6. Deploy. Note the resulting URL, e.g. `https://netrecon-backend.onrender.com`.
+
+> Render's free tier spins down after inactivity, so the first request after
+> idle time can take ~30-50s to wake up — normal, not a bug.
+
+### 3. Frontend → Netlify
+
+1. On [netlify.com](https://app.netlify.com), **Add new site → Import from GitHub**.
+2. **Base directory**: `frontend`
+3. **Build command**: `npm run build`
+4. **Publish directory**: `frontend/dist`
+5. **Environment variable**: `VITE_API_BASE_URL` = `https://netrecon-backend.onrender.com/api`
+   (your Render URL from step 2, with `/api` appended)
+6. Deploy. Then go back to Render and set `CORS_ORIGIN` to this Netlify URL.
+
+### 4. Sanity check
+
+Visit your Netlify URL, open the **Scanner** page, and run a scan against
+`scanme.nmap.org` (Nmap's official public test target — pre-filled as the
+default and safe/legal to scan for demo purposes). If it hangs on "Scanning…",
+check the browser console/network tab for CORS or 404 errors — almost always
+a mismatched `CORS_ORIGIN` or `VITE_API_BASE_URL`.
+
+**Demo target to use in recordings/screenshots:** `scanme.nmap.org`, ports
+`20-1024`. Avoid scanning arbitrary third-party hosts from a public demo link —
+stick to targets you own or that explicitly allow scanning (like scanme.nmap.org).
+
 ## Future Improvements
+
+- WebSocket-based progress updates instead of polling
+- UDP scanning and OS fingerprinting
+- Persistent storage (SQLite/Postgres) instead of in-memory job storage
+- Authentication for multi-user deployments
+- Scheduled/recurring scans
+
+
+
 
 - WebSocket-based progress updates instead of polling
 - UDP scanning and OS fingerprinting
