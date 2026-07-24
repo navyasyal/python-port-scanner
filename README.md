@@ -1,3 +1,7 @@
+
+
+https://github.com/user-attachments/assets/7cf914a1-1d14-4856-bb60-02a505c3efdd
+
 # NetRecon — Network Reconnaissance Dashboard
 
 A full-stack network reconnaissance web application built around a multithreaded
@@ -39,6 +43,12 @@ API instead of argparse, with live progress reporting and a browser-based UI.
   reduced-motion support.
 
 ## Screen Recording
+
+
+
+https://github.com/user-attachments/assets/59c75e43-d65c-4bad-be1a-b4b268f243b2
+
+
 
 
 ## Architecture
